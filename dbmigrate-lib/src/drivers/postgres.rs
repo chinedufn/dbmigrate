@@ -17,7 +17,9 @@ impl Postgres {
     /// Create PostgreSQL driver
     pub fn new(url: &str) -> Result<Postgres> {
         let config = Config::from_str(url)?;
-        let connector = TlsConnector::new().unwrap();
+        let connector = TlsConnector::builder()
+            .danger_accept_invalid_certs(true)
+            .build().unwrap();
         let connector = MakeTlsConnector::new(connector);
         let client = config.connect(connector)?;
         Postgres::from_client(client)
